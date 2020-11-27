@@ -1,36 +1,48 @@
-const Discord = require('discord.js')
-const db = require('quick.db')
+const Discord = require('discord.js');
+const db = require('quick.db');
 
+exports.run = async(client, message, args) => {
+   if(!message.member.roles.cache.has('YetkiliRolİD')) return message.channel.send('Bu komutu kullanabilmek için <@&YetkiliRolİD>Rolüne Sahıp Olmalısınız')
+   let member = message.mentions.users.first() 
+   if(!member) {
+       return message.channel.send('Bir kişi etiketlemelisin')
+   }
+   let erkek = message.guild.roles.cache.find(s => s.name === 'Erkek')
+   
+   
+   
+   let kayıtsız = message.guild.roles.cache.find(r => r.name === 'Kayıtsız')
 
-exports.run = async (client, message, args) => {
-    if(!message.member.roles.cache.has('YetkiliRolİd')) return message.reply('Bu Komut İçin <&@id> Rolüne Sahip Olman Lazım')
+   let kayıt = message.guild.member(member)
+   let isim = args[1]
+   let yas = args[2]
 
-  let verilecek = "ErkekRolİD"//ErkekRolİd
-  let alınıcak = "Kayıtsızrolİd"//KayıtsızRolİD
-  let isim = args[1]
-  let yaş = args[2]
-  let a = message.mentions.members.first()
-  
-  if (!a) return message.reply('Kişi Belirt')
-  if (!isim || !yaş) return message.reply('**İsim** Ve **Yaş** Belirt')
-  if  (isNaN(yaş)) return message.reply('Yaşı Nasıl Rakamlardan Oluşmadan Belirtmeyi Düşünüyosun')
-    db.add(`erkek_${message.author.id}`, 1)
+   if(!isim) return message.channel.send('İsim belirtmelisin')
+   if(isNaN(yas)) return message.channel.send('Yaş belirtmelisin')
 
- a.setNickname(`${isim} | ${yaş}`)
-  a.roles.add(verilecek)
-  a.roles.remove(alınıcak)
+   kayıt.setNickname(`${isim} ・ ${yas}`)
   
-  message.channel.send(`${a} Adlı Kullanıcı Başarıyla Kaydoldu`)
+   kayıt.roles.add(erkek)
   
+   kayıt.roles.remove(kayıtsız)
   
-  
-  
-  
+   let embed = new Discord.MessageEmbed()
+   .setColor('BLUE')
+   .setTitle('Kayıt Başarılı')
+   .addField('Kayıt edilen kullanıcı',member)
+   .addField('Adı ;', isim)
+   .addField('Yaşı ;', yas)
+   .addField('Kayıt eden yetkili', message.author)
+  message.channel.send(embed)
 }
+
 exports.conf = {
-  aliases: [],
-  permLevel: 0
-}
+    enabled: true,
+    guildOnly: false,
+    aliases:['e'],
+    permlevel: 0
+};
+
 exports.help = {
-  name: "erkek"
+    name: "erkek"
 }
